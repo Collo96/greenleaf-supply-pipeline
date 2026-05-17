@@ -1,0 +1,8 @@
+.env
+.streamlit/secrets.toml
+data/raw/*.xlsx
+data/staging/
+data/processed/
+*.db
+__pycache__/
+logs/*.log

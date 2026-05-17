@@ -1,0 +1,22 @@
+name: Monthly ETL Pipeline
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 1 * *"   # 1st of every month at 6AM UTC
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python 00_generate_excel_data.py
+      - run: python 01_extract.py
+      - run: python 02_transform.py
+      - run: python 03_load.py
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
