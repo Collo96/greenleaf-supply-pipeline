@@ -49,9 +49,11 @@ def load_all():
     ) or os.environ.get("DATABASE_URL")
 
     if db_url:
-        engine = create_engine(
-            db_url.replace("postgresql://", "postgresql+psycopg://")
-        )
+        if db_url.startswith("postgres://"):
+            db_url = "postgresql+psycopg" + db_url[len("postgres"):]
+        elif db_url.startswith("postgresql://"):
+            db_url = "postgresql+psycopg" + db_url[len("postgresql"):]
+        engine = create_engine(db_url)
         sales     = pd.read_sql("SELECT * FROM gl_sales",     engine)
         inventory = pd.read_sql("SELECT * FROM gl_inventory", engine)
         orders    = pd.read_sql("SELECT * FROM gl_orders",    engine)
@@ -338,3 +340,4 @@ with tab4:
     fig3.update_traces(line_color="#2d6a2d", line_width=2.5)
     fig3.update_layout(height=280)
     st.plotly_chart(fig3, use_container_width=True)
+
